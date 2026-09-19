@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>28 Días — Hábitos & Rutinas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="apple-touch-icon" href="icono.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="28 Days">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#FAF9F6',
+                            100: '#F5F4F0',
+                            150: '#EFECE6',
+                            200: '#E5E2DA',
+                            300: '#D1CCC0',
+                            400: '#A39D8F',
+                            500: '#797365',
+                            600: '#545046',
+                            700: '#38352F',
+                            800: '#23211D',
+                            900: '#141311',
+                            950: '#0C0B0A',
+                        },
+                        amber: {
+                            500: '#F59E0B',
+                            600: '#D97706',
+                        },
+                        accent: {
+                            DEFAULT: '#141311',
+                            subtle: '#EAE6DF',
+                            glow: 'rgba(20, 19, 17, 0.06)',
+                        }
+                    },
+                    letterSpacing: {
+                        tighter: '-0.04em',
+                        tight: '-0.02em',
+                        wide: '0.04em',
+                        wider: '0.08em',
+                        widest: '0.14em',
+                    },
+                    boxShadow: {
+                        'clean': '0 2px 10px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.03)',
+                        'float': '0 12px 36px -8px rgba(0,0,0,0.08), 0 4px 12px -2px rgba(0,0,0,0.03)',
+                        'subtle-inner': 'inset 0 1px 2px rgba(0,0,0,0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FAF9F6;
+            color: #141311;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .day-cell {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .bottom-bar {
+            background: rgba(250, 249, 246, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+
+<body class="h-full flex justify-center bg-stone-100 antialiased selection:bg-stone-900 selection:text-white">
+
+    <!-- Mobile Screen Frame Simulator Container -->
+    <div
+        class="w-full max-w-md h-full flex flex-col bg-stone-50 text-stone-900 relative shadow-2xl overflow-hidden border-x border-stone-200/60 sm:rounded-[2.5rem] sm:my-auto sm:h-[94vh] sm:border">
+
+        <!-- Subtle Top Minimal Status / Brand Bar -->
+        <header class="pt-5 pb-3 px-6 flex items-center justify-between z-20 shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-stone-900 inline-block animate-pulse"></span>
+                <span class="text-[11px] font-mono font-medium tracking-widest uppercase text-stone-500">28 DÍAS</span>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <div id="streak-badge"
+                    class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-stone-200/80 shadow-clean text-[11px] font-mono text-stone-700">
+                    <span class="text-amber-500 text-xs">◆</span>
+                    <span id="header-streak-label" class="font-medium">Día 1/28</span>
+                </div>
+                <button id="btn-open-settings" aria-label="Ajustes"
+                    class="w-8 h-8 rounded-full bg-white border border-stone-200/80 shadow-clean flex items-center justify-center text-stone-500 hover:text-stone-900 hover:border-stone-400 active:scale-95 transition-all">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.75a5.25 5.25 0 015.25 5.25c0 1.284-.46 2.46-1.226 3.375l.186.435 2.1 1.212a.75.75 0 01-.75 1.3l-2.1-1.213-.435.186a5.25 5.25 0 01-8.05-5.344l-.435-.186-2.1 1.213a.75.75 0 01-.75-1.3l2.1-1.213.186-.435A5.25 5.25 0 0112 6.75z" />
+                        <circle cx="12" cy="12" r="2.25" />
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dynamic View Container -->
+        <main class="flex-1 relative overflow-hidden flex flex-col">
+
+            <!-- ============================================== -->
+            <!-- TAB 1: HOY (CENTRAL FOCUS & ACTION)            -->
+            <!-- ============================================== -->
+            <section id="view-today"
+                class="tab-content active flex-col h-full overflow-hidden no-scrollbar px-6 pt-2 pb-28">
+
+                <!-- Minimal Hero Gauge Indicator -->
+                <div class="flex flex-col items-center justify-center my-3 relative shrink-0">
+                    <div id="trigger-expanded-ring"
+                        class="relative w-56 h-56 flex items-center justify-center cursor-pointer group active:scale-[0.98] transition-transform">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+                            <!-- Track -->
+                            <circle cx="80" cy="80" r="70" stroke="#EAE7DF" stroke-width="3.5" fill="transparent" />
+                            <!-- Progress Stroke -->
+                            <circle id="main-progress-circle" class="progress-ring-circle" cx="80" cy="80" r="70"
+                                stroke="#141311" stroke-width="4" stroke-linecap="round" fill="transparent"
+                                stroke-dasharray="439.82" stroke-dashoffset="439.82" />
+                        </svg>
+
+                        <!-- Center Minimal Typography -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center select-none">
+                            <span
+                                class="text-[10px] uppercase font-mono font-medium tracking-widest text-stone-400 mb-0.5">DÍA
+                                ACTUAL</span>
+                            <div class="flex items-baseline justify-center">
+                                <span id="display-day-hero"
+                                    class="text-6xl font-light tracking-tighter text-stone-900 leading-none">1</span>
+                            </div>
+                            <span class="text-[12px] font-mono text-stone-400 mt-1">/ 28</span>
+
+                            <div
+                                class="mt-3 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-stone-100 border border-stone-200 text-[10px] font-mono text-stone-600">
+                                <span id="today-completion-pct">0% completado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-stone-400 mt-1 font-mono tracking-wide">Toca para ver desglose detallado
+                    </p>
+                </div>
+
+                <!-- Complete Day Action Button -->
+                <div class="w-full my-3 flex flex-col items-center shrink-0">
+                    <button id="btn-complete-day"
+                        class="w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2 border bg-stone-900 text-stone-50 border-stone-900 shadow-sm active:scale-[0.98] hover:bg-stone-800">
+                        <svg class="w-4 h-4 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                        <span id="btn-complete-text">Marcar Día Completado</span>
+                    </button>
+                    <p id="complete-day-hint" class="text-[11px] text-stone-400 font-mono mt-1.5 text-center">
+                        Registrarás el avance y cerrarás el ciclo de hoy</p>
+                </div>
+
+                <!-- Daily Habits Checklist Section -->
+                <div class="w-full mt-4 flex flex-col flex-1 min-h-0">
+                    <div class="flex items-center justify-between mb-3 px-1 shrink-0">
+                        <div>
+                            <h2 class="text-xs font-semibold uppercase tracking-wider text-stone-500 font-mono">Hábitos
+                                de hoy</h2>
+                            <p id="today-weekday-name" class="text-sm font-medium text-stone-900 capitalize">Lunes</p>
+                        </div>
+                        <span id="today-tasks-counter"
+                            class="text-xs font-mono px-2 py-0.5 rounded-md bg-white border border-stone-200 text-stone-600">0/0</span>
+                    </div>
+
+                    <!-- List Container -->
+                    <div id="today-tasks-list" class="flex flex-col gap-2 min-h-0 flex-1 overflow-y-auto no-scrollbar pb-4 pr-0.5">
+                        <!-- Dynamic entries will render here -->
+                    </div>
+                </div>
+
+
+
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 2: RUTINAS & HÁBITOS (SEMANA ACTUAL)       -->
+            <!-- ============================================== -->
+            <section id="view-habits" class="tab-content flex-col h-full overflow-hidden no-scrollbar px-6 pt-2 pb-28">
+
+                <div class="flex items-center justify-between mb-4 mt-2 shrink-0">
+                    <div>
+                        <h1 class="text-xl font-semibold tracking-tight text-stone-900">Mis Hábitos</h1>
+                        <p class="text-xs text-stone-500 mt-0.5">Objetivos semanales y frecuencia</p>
+                    </div>
+                    <button id="btn-add-habit"
+                        class="h-9 px-3.5 rounded-xl bg-stone-900 text-white font-medium text-xs flex items-center gap-1.5 shadow-clean hover:bg-stone-800 active:scale-95 transition-all">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Nuevo</span>
+                    </button>
+                </div>
+
+                <!-- Global Weekly Progress Card -->
+                <div id="weekly-progress-container"
+                    class="relative shrink-0 bg-gradient-to-b from-white via-white to-stone-50 border border-[#E8E2D6] rounded-3xl p-5 mb-5 shadow-clean overflow-hidden">
+                    <div
+                        class="absolute -right-8 -top-8 w-28 h-28 bg-stone-100/60 rounded-full blur-xl pointer-events-none">
+                    </div>
+                    <div class="flex items-center justify-between mb-3 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 border border-stone-200/70 text-[10px] font-mono tracking-wider text-stone-600 uppercase">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
+                                Semana en curso
+                            </span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="habits-weekly-pct"
+                                class="text-2xl font-mono font-semibold tracking-tight text-stone-900 leading-none">0%</span>
+                            <span id="weekly-percentage" class="hidden">0%</span>
+                        </div>
+                    </div>
+                    <div
+                        class="relative w-full h-3.5 bg-stone-100/90 rounded-full p-0.5 border border-stone-200/60 shadow-inner overflow-hidden my-2.5">
+                        <div id="habits-weekly-bar"
+                            class="h-full bg-amber-500 rounded-full transition-all duration-500 relative flex items-center justify-end pr-0.5"
+                            style="width: 0%;">
+                            <div id="weekly-progress-bar" class="w-1.5 h-1.5 rounded-full bg-white/80 shadow-sm"></div>
+                        </div>
+                    </div>
+                    <div
+                        class="flex justify-between items-center mt-3 pt-2 border-t border-stone-100 text-[11px] font-mono text-stone-500">
+                        <span id="habits-completed-summary" class="font-medium text-stone-700">0 completados</span>
+                        <span class="text-[10px] uppercase tracking-wider text-stone-400">Progreso semanal</span>
+                    </div>
+                </div>
+
+                <!-- List of Configured Habits -->
+                <div id="all-habits-list" class="flex flex-col gap-2.5 min-h-0 flex-1 overflow-y-auto no-scrollbar pb-4 pr-0.5">
+                    <!-- Dynamic -->
+                </div>
+
+            </section>
+
+            <!-- ============================================== -->
+            <!-- TAB 3: PROGRESO & MÉTRICAS (HEATMAP COMPLETO) -->
+            <!-- ============================================== -->
+            <section id="view-analytics"
+                class="tab-content flex-col h-full overflow-y-auto no-scrollbar px-6 pt-2 pb-28">
+
+                <div class="mb-4 mt-2">
+                    <h1 class="text-xl font-semibold tracking-tight text-stone-900">Progreso 28 Días</h1>
+                    <p class="text-xs text-stone-500 mt-0.5">Visión global de constancia y hábitos</p>
+                </div>
+
+                <!-- Big Heatmap Card -->
+                <div class="bg-white border border-stone-200/90 rounded-2xl p-5 shadow-clean mb-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-[10px] font-mono uppercase tracking-widest text-stone-400">MAPA DE
+                                RETO</span>
+                            <h3 class="text-sm font-semibold text-stone-900">4 Semanas consecutivas</h3>
+                        </div>
+                        <div class="text-right">
+                            <span id="analytics-rate-pct"
+                                class="text-lg font-mono font-semibold text-stone-900 leading-none">0%</span>
+                            <span class="block text-[10px] text-stone-400 font-mono">Efectividad</span>
+                        </div>
+                    </div>
+
+                    <!-- 4 Weeks x 7 Days Grid -->
+                    <div class="flex flex-col gap-1.5 w-full">
+                        <div class="grid grid-cols-7 gap-1 text-[10px] text-stone-400 font-mono text-center mb-1">
+                            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                        </div>
+                        <div id="full-analytics-heatmap" class="grid grid-cols-7 gap-1.5 w-full">
+                            <!-- 28 items -->
+                        </div>
+                    </div>
+
+                    <!-- Heatmap Legend -->
+                    <div
+                        class="flex items-center justify-between mt-5 pt-4 border-t border-stone-100 text-[10px] font-mono text-stone-400">
+                        <span>Sin registro</span>
+                        <div class="flex items-center gap-1">
+                            <div class="w-3 h-3 rounded-[3px] bg-stone-100 border border-stone-200"></div>
+                            <div class="w-3 h-3 rounded-[3px] bg-stone-300"></div>
+                            <div class="w-3 h-3 rounded-[3px] bg-stone-500"></div>
+                            <div class="w-3 h-3 rounded-[3px] bg-stone-700"></div>
+                            <div class="w-3 h-3 rounded-[3px] bg-stone-900"></div>
+                        </div>
+                        <span>100% Día</span>
+                    </div>
+                </div>
+
+                <!-- Stats summary columns -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-white border border-stone-200/80 rounded-2xl p-3.5 shadow-clean">
+                        <span class="text-[10px] font-mono text-stone-400 uppercase tracking-wider block">Racha
+                            Actual</span>
+                        <span id="stats-current-streak"
+                            class="text-2xl font-light text-stone-900 font-mono mt-0.5 block">0</span>
+                        <span class="text-[11px] text-stone-500">días sin fallar</span>
+                    </div>
+                    <div class="bg-white border border-stone-200/80 rounded-2xl p-3.5 shadow-clean">
+                        <span class="text-[10px] font-mono text-stone-400 uppercase tracking-wider block">Días
+                            Restantes</span>
+                        <span id="stats-remaining-days"
+                            class="text-2xl font-light text-stone-900 font-mono mt-0.5 block">27</span>
+                        <span class="text-[11px] text-stone-500">para terminar</span>
+                    </div>
+                </div>
+
+                <!-- User profile badge -->
+                <div
+                    class="bg-white border border-stone-200/80 rounded-2xl p-4 shadow-clean flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-full bg-stone-900 text-stone-50 flex items-center justify-center font-mono font-medium text-xs">
+                            <span id="profile-avatar-letters">US</span>
+                        </div>
+                        <div>
+                            <span id="profile-display-name"
+                                class="text-sm font-semibold text-stone-900 block">Usuario</span>
+                            <span id="profile-dates-summary" class="text-[11px] text-stone-400 font-mono block">Inicio:
+                                Hoy · Fin: --</span>
+                        </div>
+                    </div>
+                    <button id="btn-edit-profile-jump"
+                        class="text-xs font-mono text-stone-500 hover:text-stone-900 underline underline-offset-4">
+                        Editar
+                    </button>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- ============================================== -->
+        <!-- BOTTOM NAVIGATION BAR (FLOATING MINIMAL)       -->
+        <!-- ============================================== -->
+        <nav
+            class="absolute bottom-4 left-6 right-6 h-14 bottom-bar border border-stone-200/90 rounded-2xl shadow-float flex items-center justify-around px-2 z-30">
+
+
+            <button id="nav-habits"
+                class="nav-tab-btn flex-1 flex flex-col items-center justify-center py-1 text-stone-400 hover:text-stone-700 transition-all">
+                <svg class="w-5 h-5 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 12h16.5m-16.5 4.5h16.5m-16.5-9h16.5" />
+                </svg>
+                <span class="text-[10px] font-mono font-medium tracking-tight">Hábitos</span>
+            </button>
+
+            <button id="nav-today"
+                class="nav-tab-btn flex-1 flex flex-col items-center justify-center py-1 text-stone-900 transition-all">
+                <svg class="w-5 h-5 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="8" stroke-dasharray="35" stroke-dashoffset="6" />
+                    <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+                </svg>
+                <span class="text-[10px] font-mono font-medium tracking-tight">Hoy</span>
+            </button>
+
+            <button id="nav-analytics"
+                class="nav-tab-btn flex-1 flex flex-col items-center justify-center py-1 text-stone-400 hover:text-stone-700 transition-all">
+                <svg class="w-5 h-5 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3.5" y="3.5" width="6" height="6" rx="1.5" />
+                    <rect x="14.5" y="3.5" width="6" height="6" rx="1.5" />
+                    <rect x="3.5" y="14.5" width="6" height="6" rx="1.5" />
+                    <rect x="14.5" y="14.5" width="6" height="6" rx="1.5" />
+                </svg>
+                <span class="text-[10px] font-mono font-medium tracking-tight">Reto</span>
+            </button>
+        </nav>
+
+        <!-- ============================================== -->
+        <!-- MODAL: DETALLE ANILLO AMPLIADO                 -->
+        <!-- ============================================== -->
+        <div id="modal-expanded-ring"
+            class="fixed inset-0 z-50 hidden bg-stone-900/40 backdrop-blur-md items-center justify-center p-5 opacity-0 transition-opacity duration-300">
+            <div
+                class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 shadow-float flex flex-col items-center relative text-center">
+                <button id="btn-close-expanded"
+                    class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-900 active:scale-90 transition-all">
+                    ✕
+                </button>
+
+                <span class="text-[11px] font-mono tracking-widest uppercase text-stone-400 mb-2">Visión de Racha</span>
+
+                <div class="relative w-48 h-48 my-4 flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+                        <circle cx="80" cy="80" r="70" stroke="#F0ECE4" stroke-width="7" fill="transparent" />
+                        <circle id="modal-ring-circle" class="progress-ring-circle" cx="80" cy="80" r="70"
+                            stroke="#141311" stroke-width="7" stroke-linecap="round" fill="transparent"
+                            stroke-dasharray="439.82" stroke-dashoffset="439.82" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="modal-ring-day-num" class="text-5xl font-light text-stone-900 font-mono">1</span>
+                        <span class="text-xs text-stone-400 font-mono">Días de 28</span>
+                    </div>
+                </div>
+
+                <div class="w-full bg-stone-50 border border-stone-200/70 rounded-xl p-3 text-left mb-2">
+                    <div class="flex justify-between text-xs font-mono text-stone-600 mb-1">
+                        <span>Progreso total:</span>
+                        <span id="modal-ring-progress-label" class="font-bold text-stone-900">0%</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono text-stone-600">
+                        <span>Días completados:</span>
+                        <span id="modal-ring-completed-label" class="text-stone-900">0 días</span>
+                    </div>
+                </div>
+
+                <p class="text-xs text-stone-500 mt-2">La constancia crea el hábito. Cada día completado fortalece tu
+                    disciplina.</p>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODAL: CREAR / EDITAR HÁBITO                   -->
+        <!-- ============================================== -->
+        <div id="modal-habit-form"
+            class="fixed inset-0 z-50 hidden bg-stone-900/40 backdrop-blur-md items-center justify-center p-5 opacity-0 transition-opacity duration-300">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 shadow-float relative">
+                <button id="btn-close-habit-modal"
+                    class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-900 active:scale-90 transition-all">
+                    ✕
+                </button>
+
+                <h3 id="habit-modal-title" class="text-base font-semibold text-stone-900 mb-4">Nuevo Objetivo</h3>
+
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">Nombre
+                            del Hábito</label>
+                        <input id="input-habit-name" type="text" placeholder="Ej. Meditar 10 min, Leer 15 págs..."
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-900 focus:bg-white transition-all">
+                    </div>
+
+                    <div>
+                        <label
+                            class="block text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">Frecuencia</label>
+                        <div class="grid grid-cols-2 gap-1.5 p-1 bg-stone-100 rounded-xl">
+                            <button id="btn-freq-weekly"
+                                class="py-1.5 text-xs font-medium rounded-lg bg-white text-stone-900 shadow-clean transition-all">Días
+                                específicos</button>
+                            <button id="btn-freq-daily"
+                                class="py-1.5 text-xs font-medium rounded-lg text-stone-500 hover:text-stone-900 transition-all">Todos
+                                los días</button>
+                        </div>
+                    </div>
+
+                    <div id="habit-days-group">
+                        <label class="block text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1.5">Días
+                            activos</label>
+                        <div id="habit-days-picker" class="flex justify-between gap-1">
+                            <button data-day="1"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">L</button>
+                            <button data-day="2"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">M</button>
+                            <button data-day="3"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">X</button>
+                            <button data-day="4"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">J</button>
+                            <button data-day="5"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">V</button>
+                            <button data-day="6"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">S</button>
+                            <button data-day="0"
+                                class="day-select-btn flex-1 py-2 text-xs font-mono rounded-lg border border-stone-200 text-stone-600 bg-white">D</button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 flex flex-col gap-2">
+                        <button id="btn-save-habit"
+                            class="w-full py-3 rounded-xl bg-stone-900 text-white font-medium text-xs tracking-wide shadow-clean hover:bg-stone-800 active:scale-[0.98] transition-all">
+                            Guardar Hábito
+                        </button>
+                        <button id="btn-delete-habit"
+                            class="hidden w-full py-2.5 rounded-xl border border-red-200 text-red-600 font-medium text-xs hover:bg-red-50 active:scale-[0.98] transition-all">
+                            Eliminar este hábito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- MODAL: AJUSTES & REINICIO                      -->
+        <!-- ============================================== -->
+        <div id="modal-settings"
+            class="fixed inset-0 z-50 hidden bg-stone-900/40 backdrop-blur-md items-center justify-center p-5 opacity-0 transition-opacity duration-300">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-6 border border-stone-200 shadow-float relative">
+                <button id="btn-close-settings"
+                    class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 hover:text-stone-900 active:scale-90 transition-all">
+                    ✕
+                </button>
+
+                <h3 class="text-base font-semibold text-stone-900 mb-4">Ajustes & Cuenta</h3>
+
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-[10px] font-mono uppercase tracking-widest text-stone-400 mb-1">Nombre
+                            o Alias</label>
+                        <input id="input-username" type="text"
+                            class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-sm text-stone-900 focus:outline-none focus:border-stone-900 focus:bg-white transition-all">
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-stone-50 border border-stone-200/70 text-xs text-stone-500">
+                        <div class="flex justify-between py-1 border-b border-stone-200/50">
+                            <span>Sincronización</span>
+                            <span class="font-mono text-stone-800">Local (Navegador)</span>
+                        </div>
+                        <div class="flex justify-between py-1">
+                            <span>Versión</span>
+                            <span class="font-mono text-stone-800">2.0 Minimal</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button id="btn-reset-challenge"
+                            class="w-full py-2.5 rounded-xl border border-stone-300 text-stone-700 font-medium text-xs hover:bg-stone-100 hover:text-red-600 hover:border-red-200 transition-all">
+                            Reiniciar Reto (Volver al Día 1)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Floating Notification -->
+        <div id="toast-container"
+            class="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 transform -translate-y-4">
+            <div id="toast-body"
+                class="px-4 py-2.5 rounded-full bg-stone-900 text-white text-xs font-medium shadow-float flex items-center gap-2">
+                <span id="toast-icon">✓</span>
+                <span id="toast-msg">Mensaje informativo</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Application Script Logic with Data Compatibility -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const TOTAL_DAYS = 28;
+            const CIRCUMFERENCE = 439.82; // 2 * pi * 70
+            const STORAGE_KEY = '28daysApp_data';
+
+            const defaultData = {
+                username: 'Mi Reto',
+                startDate: new Date().toISOString(),
+                lastAccessDate: new Date().toISOString(),
+                currentDay: 1,
+                tasks: [
+                    { id: 1, name: 'Beber 2L de agua', type: 'diario', daysOfWeek: [0, 1, 2, 3, 4, 5, 6], completed: 0, doneToday: false },
+                    { id: 2, name: '30 min de ejercicio o caminata', type: 'semanal', daysOfWeek: [1, 2, 3, 4, 5], completed: 0, doneToday: false },
+                    { id: 3, name: 'Lectura o estudio enfocado', type: 'semanal', daysOfWeek: [1, 2, 3, 4, 5], completed: 0, doneToday: false }
+                ],
+                history: new Array(TOTAL_DAYS).fill(0),
+                isNewUser: false,
+                completedToday: false
+            };
+
+            let userData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultData;
+            if (!userData.tasks || userData.tasks.length === 0) userData.tasks = defaultData.tasks;
+            if (!userData.history || userData.history.length !== TOTAL_DAYS) userData.history = new Array(TOTAL_DAYS).fill(0);
+            if (userData.currentDay === undefined) userData.currentDay = 1;
+            if (userData.completedToday === undefined) userData.completedToday = false;
+
+            function saveData() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+            }
+
+            function showToast(message, icon = '✓') {
+                const toast = document.getElementById('toast-container');
+                const msgEl = document.getElementById('toast-msg');
+                const iconEl = document.getElementById('toast-icon');
+                if (!toast) return;
+
+                msgEl.textContent = message;
+                iconEl.textContent = icon;
+                toast.classList.remove('opacity-0', '-translate-y-4');
+                toast.classList.add('opacity-100', 'translate-y-0');
+
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100', 'translate-y-0');
+                    toast.classList.add('opacity-0', '-translate-y-4');
+                }, 2800);
+            }
+
+            // Navigation Tabs
+            const tabButtons = {
+                today: document.getElementById('nav-today'),
+                habits: document.getElementById('nav-habits'),
+                analytics: document.getElementById('nav-analytics')
+            };
+            const tabViews = {
+                today: document.getElementById('view-today'),
+                habits: document.getElementById('view-habits'),
+                analytics: document.getElementById('view-analytics')
+            };
+
+            function switchTab(target) {
+                Object.keys(tabViews).forEach(key => {
+                    if (key === target) {
+                        tabViews[key].classList.add('active');
+                        tabButtons[key].classList.remove('text-stone-400');
+                        tabButtons[key].classList.add('text-stone-900');
+                    } else {
+                        tabViews[key].classList.remove('active');
+                        tabButtons[key].classList.remove('text-stone-900');
+                        tabButtons[key].classList.add('text-stone-400');
+                    }
+                });
+                if (target === 'habits') renderHabitsTab();
+                if (target === 'analytics') renderAnalyticsTab();
+            }
+
+            tabButtons.today?.addEventListener('click', () => switchTab('today'));
+            tabButtons.habits?.addEventListener('click', () => switchTab('habits'));
+            tabButtons.analytics?.addEventListener('click', () => switchTab('analytics'));
+
+            // Modals Management
+            function openModal(el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+                requestAnimationFrame(() => el.classList.remove('opacity-0'));
+            }
+            function closeModal(el) {
+                el.classList.add('opacity-0');
+                setTimeout(() => {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }, 300);
+            }
+
+            const modalSettings = document.getElementById('modal-settings');
+            const modalHabitForm = document.getElementById('modal-habit-form');
+            const modalExpanded = document.getElementById('modal-expanded-ring');
+
+            document.getElementById('btn-open-settings')?.addEventListener('click', () => {
+                document.getElementById('input-username').value = userData.username || 'Usuario';
+                openModal(modalSettings);
+            });
+            document.getElementById('btn-close-settings')?.addEventListener('click', () => closeModal(modalSettings));
+            modalSettings?.addEventListener('click', (e) => { if (e.target === modalSettings) closeModal(modalSettings); });
+
+            document.getElementById('input-username')?.addEventListener('change', (e) => {
+                userData.username = e.target.value.trim() || 'Usuario';
+                saveData();
+                updateUI();
+            });
+
+            document.getElementById('btn-reset-challenge')?.addEventListener('click', () => {
+                if (!confirm('¿Deseas reiniciar el reto? Se borrarán todos tus datos, incluidos los hábitos.')) return;
+
+                localStorage.removeItem(STORAGE_KEY);
+                window.location.reload();
+            });
+
+            // Expanded Ring Modal
+            document.getElementById('trigger-expanded-ring')?.addEventListener('click', () => {
+                openModal(modalExpanded);
+                const displayDay = Math.min(userData.currentDay, TOTAL_DAYS);
+                const progressDay = userData.completedToday ? displayDay : (displayDay - 1);
+                const pct = Math.round((progressDay / TOTAL_DAYS) * 100);
+
+                document.getElementById('modal-ring-day-num').textContent = displayDay;
+                document.getElementById('modal-ring-progress-label').textContent = `${pct}%`;
+                document.getElementById('modal-ring-completed-label').textContent = `${progressDay} días`;
+
+                const offset = CIRCUMFERENCE - ((progressDay / TOTAL_DAYS) * CIRCUMFERENCE);
+                const circle = document.getElementById('modal-ring-circle');
+                circle.style.strokeDashoffset = CIRCUMFERENCE;
+                setTimeout(() => {
+                    circle.style.strokeDashoffset = offset;
+                }, 50);
+            });
+            document.getElementById('btn-close-expanded')?.addEventListener('click', () => closeModal(modalExpanded));
+            modalExpanded?.addEventListener('click', (e) => { if (e.target === modalExpanded) closeModal(modalExpanded); });
+
+            // Day of week calculation
+            function getVirtualDayOfWeek() {
+                const start = new Date(userData.startDate);
+                const activeDay = userData.completedToday ? userData.currentDay - 1 : userData.currentDay;
+                start.setDate(start.getDate() + (activeDay - 1));
+                return start.getDay();
+            }
+
+            function syncDailyProgress() {
+                const start = new Date(userData.startDate);
+                start.setHours(0, 0, 0, 0);
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const elapsedDays = Math.floor((today.getTime() - start.getTime()) / 86400000);
+                const expectedDay = Math.min(TOTAL_DAYS + 1, Math.max(1, elapsedDays + 1));
+                const lastAccess = new Date(userData.lastAccessDate || userData.startDate);
+                lastAccess.setHours(0, 0, 0, 0);
+
+                if (today.getTime() <= lastAccess.getTime()) return;
+
+                for (let day = userData.currentDay; day < expectedDay; day++) {
+                    if (day > TOTAL_DAYS) break;
+                    if (day === userData.currentDay && !userData.completedToday) {
+                        const dayStart = new Date(start);
+                        dayStart.setDate(dayStart.getDate() + day - 1);
+                        const tasksForDay = userData.tasks.filter(task => task.daysOfWeek?.includes(dayStart.getDay()));
+                        const completedCount = tasksForDay.filter(task => task.doneToday).length;
+                        const ratio = tasksForDay.length > 0 ? completedCount / tasksForDay.length : 1;
+
+                        userData.history[day - 1] = ratio === 1 ? 4 : ratio >= 0.66 ? 3 : ratio >= 0.33 ? 2 : ratio > 0 ? 1 : 0;
+                    } else {
+                        userData.history[day - 1] = 0;
+                    }
+                }
+
+                userData.currentDay = expectedDay;
+                userData.completedToday = false;
+                userData.tasks.forEach(task => { task.doneToday = false; });
+                userData.lastAccessDate = new Date().toISOString();
+
+                if (today.getDay() === 1) {
+                    userData.tasks.forEach(task => { task.completed = 0; });
+                }
+
+                saveData();
+            }
+
+            // Habit Form Handlers
+            let editingHabitId = null;
+            let selectedDays = [1, 2, 3, 4, 5];
+            let habitFreq = 'semanal';
+
+            function updateHabitFormDays() {
+                const buttons = document.querySelectorAll('#habit-days-picker button');
+                buttons.forEach(btn => {
+                    const day = parseInt(btn.dataset.day);
+                    if (selectedDays.includes(day)) {
+                        btn.classList.add('bg-stone-900', 'text-white', 'border-stone-900');
+                        btn.classList.remove('bg-white', 'text-stone-600', 'border-stone-200');
+                    } else {
+                        btn.classList.remove('bg-stone-900', 'text-white', 'border-stone-900');
+                        btn.classList.add('bg-white', 'text-stone-600', 'border-stone-200');
+                    }
+                });
+            }
+
+            document.querySelectorAll('#habit-days-picker button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (habitFreq === 'diario') return;
+                    const d = parseInt(btn.dataset.day);
+                    if (selectedDays.includes(d)) {
+                        if (selectedDays.length > 1) selectedDays = selectedDays.filter(x => x !== d);
+                    } else {
+                        selectedDays.push(d);
+                    }
+                    updateHabitFormDays();
+                });
+            });
+
+            const btnFreqWeekly = document.getElementById('btn-freq-weekly');
+            const btnFreqDaily = document.getElementById('btn-freq-daily');
+            const daysPickerGroup = document.getElementById('habit-days-group');
+
+            function setFreq(type) {
+                habitFreq = type;
+                if (type === 'semanal') {
+                    btnFreqWeekly.classList.add('bg-white', 'text-stone-900', 'shadow-clean');
+                    btnFreqWeekly.classList.remove('text-stone-500');
+                    btnFreqDaily.classList.remove('bg-white', 'text-stone-900', 'shadow-clean');
+                    btnFreqDaily.classList.add('text-stone-500');
+                    daysPickerGroup.classList.remove('opacity-40', 'pointer-events-none');
+                } else {
+                    btnFreqDaily.classList.add('bg-white', 'text-stone-900', 'shadow-clean');
+                    btnFreqDaily.classList.remove('text-stone-500');
+                    btnFreqWeekly.classList.remove('bg-white', 'text-stone-900', 'shadow-clean');
+                    btnFreqWeekly.classList.add('text-stone-500');
+                    selectedDays = [0, 1, 2, 3, 4, 5, 6];
+                    updateHabitFormDays();
+                    daysPickerGroup.classList.add('opacity-40', 'pointer-events-none');
+                }
+            }
+
+            btnFreqWeekly?.addEventListener('click', () => setFreq('semanal'));
+            btnFreqDaily?.addEventListener('click', () => setFreq('diario'));
+
+            function openCreateHabitModal() {
+                editingHabitId = null;
+                document.getElementById('habit-modal-title').textContent = 'Nuevo Hábito';
+                document.getElementById('input-habit-name').value = '';
+                document.getElementById('btn-delete-habit').classList.add('hidden');
+                selectedDays = [1, 2, 3, 4, 5];
+                setFreq('semanal');
+                updateHabitFormDays();
+                openModal(modalHabitForm);
+            }
+
+            function openEditHabitModal(habit) {
+                editingHabitId = habit.id;
+                document.getElementById('habit-modal-title').textContent = 'Editar Hábito';
+                document.getElementById('input-habit-name').value = habit.name;
+                document.getElementById('btn-delete-habit').classList.remove('hidden');
+                selectedDays = habit.daysOfWeek ? [...habit.daysOfWeek] : [1, 2, 3, 4, 5];
+                setFreq(habit.type || 'semanal');
+                updateHabitFormDays();
+                openModal(modalHabitForm);
+            }
+
+            document.getElementById('btn-add-habit')?.addEventListener('click', openCreateHabitModal);
+            document.getElementById('btn-close-habit-modal')?.addEventListener('click', () => closeModal(modalHabitForm));
+            modalHabitForm?.addEventListener('click', (e) => { if (e.target === modalHabitForm) closeModal(modalHabitForm); });
+
+            document.getElementById('btn-save-habit')?.addEventListener('click', () => {
+                const name = document.getElementById('input-habit-name').value.trim();
+                if (!name) {
+                    showToast('Introduce un nombre para el hábito', '!');
+                    return;
+                }
+
+                if (editingHabitId) {
+                    const idx = userData.tasks.findIndex(t => t.id === editingHabitId);
+                    if (idx > -1) {
+                        userData.tasks[idx].name = name;
+                        userData.tasks[idx].type = habitFreq;
+                        userData.tasks[idx].daysOfWeek = [...selectedDays];
+                    }
+                    showToast('Hábito actualizado', '✓');
+                } else {
+                    userData.tasks.push({
+                        id: Date.now(),
+                        name: name,
+                        type: habitFreq,
+                        daysOfWeek: [...selectedDays],
+                        completed: 0,
+                        doneToday: false
+                    });
+                    showToast('Hábito creado con éxito', '✓');
+                }
+                saveData();
+                closeModal(modalHabitForm);
+                updateUI();
+            });
+
+            document.getElementById('btn-delete-habit')?.addEventListener('click', () => {
+                if (editingHabitId && confirm('¿Eliminar este hábito?')) {
+                    userData.tasks = userData.tasks.filter(t => t.id !== editingHabitId);
+                    saveData();
+                    closeModal(modalHabitForm);
+                    updateUI();
+                    showToast('Hábito eliminado', '✓');
+                }
+            });
+
+            document.getElementById('btn-edit-profile-jump')?.addEventListener('click', () => {
+                document.getElementById('input-username').value = userData.username || 'Usuario';
+                openModal(modalSettings);
+            });
+
+            // Toggle Done Today
+            window.toggleHabitItem = function (taskId) {
+                if (userData.completedToday) {
+                    showToast('El día ya ha sido completado y cerrado', 'ℹ');
+                    return;
+                }
+                const task = userData.tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                task.doneToday = !task.doneToday;
+                if (task.doneToday) task.completed++;
+                else task.completed = Math.max(0, task.completed - 1);
+
+                saveData();
+                updateUI();
+            };
+
+            // Complete Day Logic
+            document.getElementById('btn-complete-day')?.addEventListener('click', () => {
+                if (userData.currentDay > TOTAL_DAYS || userData.completedToday) return;
+
+                const todayVirtualDOW = getVirtualDayOfWeek();
+                const tasksToday = userData.tasks.filter(t => t.daysOfWeek && t.daysOfWeek.includes(todayVirtualDOW));
+                const allTasksDone = tasksToday.length === 0 || tasksToday.every(task => task.doneToday);
+
+                if (!allTasksDone && !confirm('Aún tienes actividades pendientes. ¿Seguro que quieres cerrar el día?')) return;
+
+                let intensity = 0;
+                if (tasksToday.length > 0) {
+                    const completedToday = tasksToday.filter(t => t.doneToday).length;
+                    const ratio = completedToday / tasksToday.length;
+                    if (ratio === 1) intensity = 4;
+                    else if (ratio >= 0.66) intensity = 3;
+                    else if (ratio >= 0.33) intensity = 2;
+                    else if (ratio > 0) intensity = 1;
+                    else intensity = 0;
+                } else {
+                    intensity = 4; // Día libre sin tareas marcadas
+                }
+
+                userData.history[userData.currentDay - 1] = intensity;
+                userData.completedToday = true;
+                userData.currentDay = Math.min(userData.currentDay + 1, TOTAL_DAYS + 1);
+                userData.lastAccessDate = new Date().toISOString();
+
+                saveData();
+                updateUI();
+                showToast('¡Día cerrado con éxito! Racha actualizada', '★');
+            });
+
+            // Render Functions
+            let ringIntroDone = false;
+
+            function updateUI() {
+                const displayDay = Math.min(userData.currentDay, TOTAL_DAYS);
+                const progressDay = userData.completedToday ? displayDay : Math.max(0, displayDay - 1);
+
+                // Hero Number & Gauge
+                const dayHero = document.getElementById('display-day-hero');
+                if (dayHero) dayHero.textContent = displayDay;
+
+                const circle = document.getElementById('main-progress-circle');
+                if (circle) {
+                    const offset = CIRCUMFERENCE - ((progressDay / TOTAL_DAYS) * CIRCUMFERENCE);
+                    if (!ringIntroDone) {
+                        ringIntroDone = true;
+                        circle.style.strokeDashoffset = CIRCUMFERENCE;
+                        requestAnimationFrame(() => requestAnimationFrame(() => {
+                            circle.style.strokeDashoffset = offset;
+                        }));
+                    } else {
+                        circle.style.strokeDashoffset = offset;
+                    }
+                }
+
+                // Header streak badge
+                const headerBadge = document.getElementById('header-streak-label');
+                if (headerBadge) headerBadge.textContent = `Día ${displayDay}/28`;
+
+                // Profile initials & info
+                const name = userData.username || 'Usuario';
+                const initials = name.substring(0, 2).toUpperCase();
+                document.getElementById('profile-avatar-letters').textContent = initials;
+                document.getElementById('profile-display-name').textContent = name;
+
+                const startDate = new Date(userData.startDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + (TOTAL_DAYS - 1));
+                const opt = { day: 'numeric', month: 'short' };
+                document.getElementById('profile-dates-summary').textContent = `Inicio: ${startDate.toLocaleDateString('es-ES', opt)} · Fin: ${endDate.toLocaleDateString('es-ES', opt)}`;
+
+                // Today tasks list
+                renderTodayView();
+                renderMiniHeatmap();
+                renderHabitsTab();
+                renderAnalyticsTab();
+            }
+
+            function renderTodayView() {
+                const container = document.getElementById('today-tasks-list');
+                if (!container) return;
+
+                const todayVirtualDOW = getVirtualDayOfWeek();
+                const daysNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                document.getElementById('today-weekday-name').textContent = daysNames[todayVirtualDOW];
+
+                const tasksToday = userData.tasks.filter(t => t.daysOfWeek && t.daysOfWeek.includes(todayVirtualDOW));
+                const completedCount = tasksToday.filter(t => t.doneToday).length;
+
+                document.getElementById('today-tasks-counter').textContent = `${completedCount}/${tasksToday.length}`;
+
+                const pct = tasksToday.length === 0 ? 100 : Math.round((completedCount / tasksToday.length) * 100);
+                document.getElementById('today-completion-pct').textContent = `${pct}% hoy`;
+
+                container.innerHTML = '';
+
+                if (tasksToday.length === 0) {
+                    container.innerHTML = `
+                    <div class="p-6 text-center bg-white border border-stone-200/70 rounded-2xl">
+                        <span class="text-stone-400 font-mono text-xs block mb-1">DÍA DE DESCANSO</span>
+                        <p class="text-sm text-stone-600">No tienes hábitos fijados para hoy. Tómate un respiro.</p>
+                    </div>
+                `;
+                } else {
+                    tasksToday.forEach(task => {
+                        const el = document.createElement('div');
+                        el.className = `flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-200 ${task.doneToday
+                                ? 'bg-stone-100/80 border-stone-200 text-stone-400'
+                                : 'bg-white border-stone-200/90 text-stone-900 shadow-clean hover:border-stone-300'
+                            } cursor-pointer active:scale-[0.99]`;
+
+                        el.onclick = () => toggleHabitItem(task.id);
+
+                        el.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all ${task.doneToday
+                                ? 'bg-stone-900 border-stone-900 text-white'
+                                : 'border-stone-300 bg-white'
+                            }">
+                                ${task.doneToday ? '<svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : ''}
+                            </div>
+                            <span class="text-sm font-medium ${task.doneToday ? 'line-through text-stone-400' : 'text-stone-800'}">${task.name}</span>
+                        </div>
+                        <span class="text-[10px] font-mono uppercase tracking-wider text-stone-400">${task.type === 'diario' ? 'Diario' : 'Semanal'}</span>
+                    `;
+                        container.appendChild(el);
+                    });
+                }
+
+                // Complete button styling
+                const btnComplete = document.getElementById('btn-complete-day');
+                const btnText = document.getElementById('btn-complete-text');
+                const hint = document.getElementById('complete-day-hint');
+
+                if (userData.completedToday) {
+                    btnComplete.disabled = true;
+                    btnComplete.className = 'w-full py-3.5 px-5 rounded-2xl font-medium text-sm border bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed';
+                    btnText.textContent = 'Día Finalizado ✓';
+                    hint.textContent = 'Has cerrado las tareas de hoy. Regresa en tu siguiente ciclo.';
+                } else {
+                    btnComplete.disabled = false;
+                    const allDone = tasksToday.length === 0 || tasksToday.every(t => t.doneToday);
+                    if (allDone) {
+                        btnComplete.className = 'w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-2 border bg-stone-900 text-white border-stone-900 shadow-sm active:scale-[0.98] hover:bg-stone-800';
+                        btnText.textContent = 'Completar Día Actual';
+                        hint.textContent = '¡Todos los hábitos completados! Registra tu racha.';
+                    } else {
+                        btnComplete.className = 'w-full py-3.5 px-5 rounded-2xl font-medium text-sm transition-all flex items-center justify-center gap-2 border bg-white text-stone-700 border-stone-300 hover:border-stone-900 active:scale-[0.98]';
+                        btnText.textContent = 'Cerrar Día (Pendientes)';
+                        hint.textContent = 'Aún tienes hábitos sin marcar para la jornada de hoy.';
+                    }
+                }
+            }
+
+            function getHeatmapColor(val) {
+                if (val === 0) return 'bg-stone-100 border-stone-200/80';
+                if (val === 1) return 'bg-stone-300 border-stone-400';
+                if (val === 2) return 'bg-stone-500 border-stone-600 text-white';
+                if (val === 3) return 'bg-stone-700 border-stone-800 text-white';
+                return 'bg-stone-900 border-stone-900 text-white';
+            }
+
+            function renderMiniHeatmap() {
+                const grid = document.getElementById('mini-heatmap-grid');
+                if (!grid) return;
+                grid.innerHTML = '';
+
+                let completedDays = 0;
+                userData.history.forEach((intensity, idx) => {
+                    const dayNum = idx + 1;
+                    const isCurrent = dayNum === userData.currentDay;
+                    if (intensity > 0) completedDays++;
+
+                    const cell = document.createElement('div');
+                    cell.className = `day-cell h-5 rounded-[4px] border flex items-center justify-center text-[9px] font-mono ${getHeatmapColor(intensity)} ${isCurrent ? 'ring-2 ring-stone-900 ring-offset-1 font-bold' : ''}`;
+                    cell.textContent = dayNum;
+                    grid.appendChild(cell);
+                });
+
+                document.getElementById('mini-streak-summary').textContent = `${completedDays} / 28 completados`;
+            }
+
+            function renderHabitsTab() {
+                const container = document.getElementById('all-habits-list');
+                if (!container) return;
+                container.innerHTML = '';
+
+                let totalTarget = 0;
+                let totalDone = 0;
+
+                if (userData.tasks.length === 0) {
+                    container.innerHTML = `
+                    <div class="p-8 text-center bg-white border border-stone-200/70 rounded-2xl">
+                        <p class="text-sm text-stone-500 mb-2">No has definido ningún hábito todavía.</p>
+                        <button onclick="document.getElementById('btn-add-habit').click()" class="text-xs font-mono underline text-stone-900">Crear mi primer hábito</button>
+                    </div>
+                `;
+                } else {
+                    userData.tasks.forEach(task => {
+                        const daysCount = task.daysOfWeek ? task.daysOfWeek.length : 0;
+                        const pct = daysCount > 0 ? Math.min(100, Math.round((task.completed / daysCount) * 100)) : 0;
+                        totalTarget += daysCount;
+                        totalDone += Math.min(task.completed, daysCount);
+
+                        const card = document.createElement('div');
+                        card.className = 'bg-white border border-stone-200/90 rounded-2xl p-4 shadow-clean cursor-pointer hover:border-stone-400 transition-all flex flex-col gap-2.5';
+                        card.onclick = () => openEditHabitModal(task);
+
+                        card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-stone-900"></span>
+                                <h3 class="text-sm font-semibold text-stone-900">${task.name}</h3>
+                            </div>
+                            <span class="text-xs font-mono text-stone-500">${task.completed}/${daysCount} días</span>
+                        </div>
+                        <div class="w-full h-1 bg-stone-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-stone-900 rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[11px] font-mono text-stone-400 pt-0.5">
+                            <span class="uppercase">${task.type}</span>
+                            <span>${pct}% cumplido</span>
+                        </div>
+                    `;
+                        container.appendChild(card);
+                    });
+                }
+
+                const weeklyPct = totalTarget > 0 ? Math.round((totalDone / totalTarget) * 100) : 0;
+                document.getElementById('habits-weekly-pct').textContent = `${weeklyPct}%`;
+                document.getElementById('habits-weekly-bar').style.width = `${weeklyPct}%`;
+                document.getElementById('habits-completed-summary').textContent = `${totalDone} de ${totalTarget} metas`;
+            }
+
+            function renderAnalyticsTab() {
+                const grid = document.getElementById('full-analytics-heatmap');
+                if (!grid) return;
+                grid.innerHTML = '';
+
+                let scoreTotal = 0;
+                let currentStreak = 0;
+
+                userData.history.forEach((intensity, idx) => {
+                    const dayNum = idx + 1;
+                    const isCurrent = dayNum === userData.currentDay;
+                    if (intensity > 0) {
+                        scoreTotal += (intensity / 4);
+                        currentStreak++;
+                    }
+
+                    const cell = document.createElement('div');
+                    cell.className = `day-cell aspect-square rounded-lg border flex flex-col items-center justify-center text-[10px] font-mono ${getHeatmapColor(intensity)} ${isCurrent ? 'ring-2 ring-stone-900 ring-offset-2' : ''}`;
+                    cell.innerHTML = `
+                    <span class="text-[9px] opacity-70 leading-none">${dayNum}</span>
+                `;
+                    grid.appendChild(cell);
+                });
+
+                const overallRate = Math.round((scoreTotal / TOTAL_DAYS) * 100);
+                document.getElementById('analytics-rate-pct').textContent = `${overallRate}%`;
+                document.getElementById('stats-current-streak').textContent = currentStreak;
+
+                const remaining = Math.max(0, TOTAL_DAYS - (userData.completedToday ? userData.currentDay : userData.currentDay - 1));
+                document.getElementById('stats-remaining-days').textContent = remaining;
+            }
+
+            // Animate hero day number counting up to the current day (on load)
+            function animateHeroDayCount() {
+                const el = document.getElementById('display-day-hero');
+                const target = Math.min(userData.currentDay, TOTAL_DAYS) || 1;
+                if (!el) return;
+
+                const duration = 900;
+                const start = performance.now();
+
+                function easeOutCubic(t) {
+                    return 1 - Math.pow(1 - t, 3);
+                }
+
+                function frame(now) {
+                    const t = Math.min(1, (now - start) / duration);
+                    el.textContent = Math.max(1, Math.round(easeOutCubic(t) * target));
+                    if (t < 1) requestAnimationFrame(frame);
+                    else el.textContent = target;
+                }
+
+                requestAnimationFrame(frame);
+            }
+
+            // Initialize view
+            syncDailyProgress();
+            updateUI();
+            animateHeroDayCount();
+        });
+    </script>
+</body>
+
+</html>
