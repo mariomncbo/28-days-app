@@ -1,4 +1,7 @@
-# 28 Days App
+<div align="center">
+  <img src="icono.png" alt="28 Days App" width="120" />
+  <h1>28 Days App</h1>
+</div>
 
 Aplicación web para el seguimiento de buenos hábitos en 4 semanas (28 días).
 
