@@ -40,6 +40,10 @@ python3 -m http.server 8000
 
 Abrir `http://localhost:8000`.
 
+## Probar un día concreto
+
+En `index.html`, cambia la variable `day_num` de `null` a un número entero del 1 al 28, por ejemplo `let day_num = 5;`. Al cargar la app, se abrirá en ese día del reto. El progreso que marques en modo de prueba no sobrescribe el progreso guardado. Para volver al progreso normal basado en la fecha de inicio, déjala en `null`.
+
 ## Despliegue
 
 Conecta el repositorio a Netlify. No requiere build; se publica el directorio raíz tal cual.

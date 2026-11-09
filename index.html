@@ -629,8 +629,23 @@
             if (userData.currentDay === undefined) userData.currentDay = 1;
             if (userData.completedToday === undefined) userData.completedToday = false;
 
+            let day_num = null; // Cambia a un número del 1 al 28 para forzar ese día al probar.
+            let dayNumTestSnapshot = null;
+
             function saveData() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+                const dataToSave = dayNumTestSnapshot ? {
+                    ...userData,
+                    currentDay: dayNumTestSnapshot.currentDay,
+                    completedToday: dayNumTestSnapshot.completedToday,
+                    history: [...dayNumTestSnapshot.history],
+                    tasks: userData.tasks.map(task => {
+                        const originalTask = dayNumTestSnapshot.tasks.find(savedTask => savedTask.id === task.id);
+                        return originalTask
+                            ? { ...task, completed: originalTask.completed, doneToday: originalTask.doneToday }
+                            : task;
+                    })
+                } : userData;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
             }
 
             function showToast(message, icon = '✓') {
@@ -964,6 +979,7 @@
                 userData.history[userData.currentDay - 1] = intensity;
                 userData.completedToday = true;
                 userData.currentDay = Math.min(userData.currentDay + 1, TOTAL_DAYS + 1);
+                day_num = userData.currentDay;
                 userData.lastAccessDate = new Date().toISOString();
 
                 saveData();
@@ -1232,6 +1248,22 @@
 
             // Initialize view
             syncDailyProgress();
+            if (day_num === null) {
+                day_num = userData.currentDay;
+            } else {
+                if (!Number.isInteger(day_num) || day_num < 1 || day_num > TOTAL_DAYS) {
+                    throw new RangeError('day_num debe ser un número entero entre 1 y 28.');
+                }
+                dayNumTestSnapshot = {
+                    currentDay: userData.currentDay,
+                    completedToday: userData.completedToday,
+                    history: [...userData.history],
+                    tasks: userData.tasks.map(({ id, completed, doneToday }) => ({ id, completed, doneToday }))
+                };
+                userData.currentDay = day_num;
+                userData.completedToday = false;
+                userData.tasks.forEach(task => { task.doneToday = false; });
+            }
             updateUI();
             animateHeroDayCount();
         });
